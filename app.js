@@ -1,6 +1,6 @@
 const QUIZ_LENGTH = 15;
-const TIME_LIMIT_MS = 1 * 60 * 1000; // タイムアタックの制限時間（1分）
-const TIME_LABEL = "1分タイムアタック";
+const TIME_LIMIT_MS = 90 * 1000; // タイムアタックの制限時間（1分半）
+const TIME_LABEL = "1分半タイムアタック";
 const WARN_MS = 10 * 1000; // 残りこの時間を切るとタイマーを赤く点滅させる
 // シェア投稿に載せるURL（GitHub Pagesで公開したときのアドレス）
 const SHARE_URL = "https://riku-meiship-it.github.io/My-app/";
