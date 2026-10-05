@@ -123,7 +123,6 @@ main {
 /* ── クイズ ── */
 .quiz-head { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 10px; }
 .q-count { font-family: "Bebas Neue", sans-serif; font-size: 1.5rem; letter-spacing: .1em; }
-.q-score { color: var(--muted); align-self: center; font-size: .9rem; }
 
 .progress { height: 4px; background: var(--line); margin-bottom: 28px; }
 .progress-bar { height: 100%; width: 0; background: var(--rainbow); background-size: 640px 100%; transition: width .3s; }
@@ -149,28 +148,6 @@ main {
 .choice:nth-child(3) { --accent: var(--shintaro); }
 .choice:nth-child(4) { --accent: var(--juri); }
 .choice:hover:not(:disabled) { background: #202020; transform: translateX(4px); }
-.choice:disabled { cursor: default; }
-.choice.correct { background: rgba(0,176,80,.18); border-color: var(--shintaro); border-left-color: var(--shintaro); }
-.choice.wrong { background: rgba(230,0,51,.18); border-color: var(--jesse); border-left-color: var(--jesse); }
-.choice.dim { opacity: .45; }
-
-.feedback { margin-top: 24px; padding: 18px; background: var(--panel); border: 1px solid var(--line); }
-.feedback.hidden { display: none; }
-.feedback-result { font-weight: 900; font-size: 1.2rem; margin-bottom: 6px; }
-.feedback-result.ok { color: var(--shintaro); }
-.feedback-result.ng { color: var(--jesse); }
-.feedback-explain { color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
-.btn-next {
-  width: 100%;
-  font: inherit;
-  font-weight: 700;
-  color: #000;
-  background: var(--text);
-  border: none;
-  padding: 14px;
-  cursor: pointer;
-}
-.btn-next:hover { background: #fff; }
 
 /* ── 結果 ── */
 .result-score { font-family: "Bebas Neue", sans-serif; font-size: clamp(5rem, 28vw, 9rem); line-height: 1; }
@@ -185,4 +162,20 @@ main {
   color: transparent;
 }
 .result-msg { color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+.review-title { font-size: 1.1rem; letter-spacing: .1em; margin-bottom: 16px; }
+.review { list-style: none; display: grid; gap: 12px; margin-bottom: 36px; text-align: left; }
+.review-item {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--shintaro);
+  padding: 14px 16px;
+  line-height: 1.7;
+}
+.review-item.ng { border-left-color: var(--jesse); }
+.review-head { font-weight: 900; font-size: .9rem; color: var(--shintaro); }
+.review-item.ng .review-head { color: var(--jesse); }
+.review-q { font-weight: 700; margin: 4px 0; }
+.review-a { font-size: .9rem; }
+.review-e { font-size: .9rem; color: var(--muted); margin-top: 4px; }
+
 .result-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }

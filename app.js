@@ -8,22 +8,19 @@ const screens = {
 
 const el = {
   count: document.getElementById("q-count"),
-  score: document.getElementById("q-score"),
   bar: document.getElementById("progress-bar"),
   text: document.getElementById("q-text"),
   choices: document.getElementById("choices"),
-  feedback: document.getElementById("feedback"),
-  feedbackResult: document.getElementById("feedback-result"),
-  feedbackExplain: document.getElementById("feedback-explain"),
-  next: document.getElementById("btn-next"),
   resultNum: document.getElementById("result-num"),
   resultRank: document.getElementById("result-rank"),
   resultMsg: document.getElementById("result-msg"),
+  review: document.getElementById("review"),
 };
 
 let deck = [];
 let current = 0;
 let score = 0;
+let answers = [];
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -44,6 +41,7 @@ function startQuiz() {
   deck = shuffle(QUESTIONS).slice(0, QUIZ_LENGTH);
   current = 0;
   score = 0;
+  answers = [];
   show("quiz");
   renderQuestion();
 }
@@ -51,43 +49,26 @@ function startQuiz() {
 function renderQuestion() {
   const q = deck[current];
   el.count.textContent = `Q${current + 1} / ${QUIZ_LENGTH}`;
-  el.score.textContent = `正解 ${score}`;
   el.bar.style.width = `${(current / QUIZ_LENGTH) * 100}%`;
   el.text.textContent = q.q;
-  el.feedback.classList.add("hidden");
   el.choices.innerHTML = "";
 
   shuffle([q.a, ...q.w]).forEach((label) => {
     const btn = document.createElement("button");
     btn.className = "choice";
     btn.textContent = label;
-    btn.addEventListener("click", () => answer(btn, label === q.a));
+    btn.addEventListener("click", () => answer(label));
     el.choices.appendChild(btn);
   });
 }
 
-function answer(picked, isCorrect) {
+// 回答は記録するだけで、正誤と解説は15問終了後にまとめて表示する
+function answer(picked) {
   const q = deck[current];
+  const isCorrect = picked === q.a;
   if (isCorrect) score++;
+  answers.push({ q, picked, isCorrect });
 
-  el.choices.querySelectorAll(".choice").forEach((btn) => {
-    btn.disabled = true;
-    if (btn.textContent === q.a) btn.classList.add("correct");
-    else if (btn === picked) btn.classList.add("wrong");
-    else btn.classList.add("dim");
-  });
-
-  el.score.textContent = `正解 ${score}`;
-  el.bar.style.width = `${((current + 1) / QUIZ_LENGTH) * 100}%`;
-  el.feedbackResult.textContent = isCorrect ? "正解！" : `不正解… 正解は「${q.a}」`;
-  el.feedbackResult.className = `feedback-result ${isCorrect ? "ok" : "ng"}`;
-  el.feedbackExplain.textContent = q.e;
-  el.next.textContent = current + 1 < QUIZ_LENGTH ? "次へ" : "結果を見る";
-  el.feedback.classList.remove("hidden");
-  el.next.focus();
-}
-
-function next() {
   current++;
   if (current < QUIZ_LENGTH) renderQuestion();
   else showResult();
@@ -105,10 +86,39 @@ function showResult() {
   const [, rank, msg] = ranks.find(([min]) => score >= min);
   el.resultRank.textContent = rank;
   el.resultMsg.textContent = msg;
+  renderReview();
   show("result");
+}
+
+function renderReview() {
+  el.review.innerHTML = "";
+  answers.forEach(({ q, picked, isCorrect }, i) => {
+    const li = document.createElement("li");
+    li.className = `review-item ${isCorrect ? "ok" : "ng"}`;
+
+    const head = document.createElement("p");
+    head.className = "review-head";
+    head.textContent = `Q${i + 1}　${isCorrect ? "○ 正解" : "× 不正解"}`;
+
+    const question = document.createElement("p");
+    question.className = "review-q";
+    question.textContent = q.q;
+
+    const ans = document.createElement("p");
+    ans.className = "review-a";
+    ans.textContent = isCorrect
+      ? `あなたの答え：${picked}`
+      : `あなたの答え：${picked}　／　正解：${q.a}`;
+
+    const explain = document.createElement("p");
+    explain.className = "review-e";
+    explain.textContent = q.e;
+
+    li.append(head, question, ans, explain);
+    el.review.appendChild(li);
+  });
 }
 
 document.getElementById("btn-play").addEventListener("click", startQuiz);
 document.getElementById("btn-retry").addEventListener("click", startQuiz);
 document.getElementById("btn-home").addEventListener("click", () => show("home"));
-el.next.addEventListener("click", next);
