@@ -164,8 +164,6 @@ main {
 }
 .rank-count { font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--muted); white-space: nowrap; }
 .rank-name { font-weight: 700; }
-.rank-list li:first-child .rank-name { color: var(--text); }
-.rank-list li:first-child .rank-count { color: var(--text); }
 
 .home-note { font-size: .8rem; color: var(--muted); max-width: 22em; line-height: 1.6; }
 
