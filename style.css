@@ -157,10 +157,14 @@ main {
 
 .q-text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 24px; min-height: 3.2em; }
 
-/* 選択肢はすべて同じ見た目にし、A〜Dのラベルで区別する（色で意味を持たせない） */
+/* 選択肢はすべて同じ見た目にし、A〜Dのラベルで区別する。
+   色は6人のメンバーカラーの帯を全選択肢に共通でつけ、位置ごとに意味を持たせない */
 .choices { display: grid; gap: 12px; counter-reset: choice; }
 .choice {
+  --stripe: linear-gradient(180deg, var(--jesse), var(--taiga), #888, var(--yugo), var(--shintaro), var(--juri));
   counter-increment: choice;
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -170,9 +174,25 @@ main {
   color: var(--text);
   background: var(--panel);
   border: 1px solid var(--line);
-  padding: 14px 16px;
+  padding: 14px 16px 14px 22px;
   cursor: pointer;
   transition: background .15s, border-color .15s;
+}
+.choice::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 5px;
+  background: var(--stripe);
+  transition: width .15s;
+}
+.choice:hover::after { width: 8px; }
+.choice.selected {
+  border: 2px solid transparent;
+  border-image: var(--rainbow) 1;
+  padding: 13px 15px 13px 21px;
 }
 .choice::before {
   content: counter(choice, upper-alpha);
@@ -190,7 +210,7 @@ main {
 }
 .choice:hover { background: #202020; border-color: var(--muted); }
 .choice:hover::before { color: var(--text); border-color: var(--muted); }
-.choice.selected { background: #242424; border-color: var(--text); }
+.choice.selected { background: #242424; }
 .choice.selected::before { background: var(--text); color: var(--bg); border-color: var(--text); }
 
 .quiz-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
