@@ -39,6 +39,17 @@
       <div class="progress"><div id="progress-bar" class="progress-bar"></div></div>
       <h2 id="q-text" class="q-text"></h2>
       <div id="choices" class="choices"></div>
+      <div class="quiz-nav">
+        <button id="btn-prev" class="btn-sub">← 前の問題</button>
+        <button id="btn-quit" class="btn-sub">ホームへ戻る</button>
+      </div>
+      <div id="quit-confirm" class="quit-confirm" hidden>
+        <p>クイズを中断してホームへ戻りますか？<br>ここまでの回答は保存されません。</p>
+        <div class="quit-actions">
+          <button id="btn-quit-yes" class="btn-quit-yes">中断する</button>
+          <button id="btn-quit-no" class="btn-sub">続ける</button>
+        </div>
+      </div>
     </section>
 
     <!-- 結果画面 -->

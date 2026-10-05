@@ -17,6 +17,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
 
 body {
   background: var(--bg);
@@ -147,7 +148,32 @@ main {
 .choice:nth-child(2) { --accent: var(--yugo); }
 .choice:nth-child(3) { --accent: var(--shintaro); }
 .choice:nth-child(4) { --accent: var(--juri); }
+.choice.selected { background: #242424; border-color: var(--text); }
 .choice:hover:not(:disabled) { background: #202020; transform: translateX(4px); }
+
+.quiz-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.quiz-nav .btn-sub { padding: 10px 18px; font-size: .9rem; }
+.btn-sub:disabled { opacity: .35; cursor: default; }
+.btn-sub:disabled:hover { color: var(--muted); border-color: var(--line); }
+
+.quit-confirm {
+  margin-top: 16px;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--jesse);
+  text-align: center;
+  line-height: 1.7;
+}
+.quit-actions { display: flex; justify-content: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.btn-quit-yes {
+  font: inherit;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--jesse);
+  border: none;
+  padding: 12px 32px;
+  cursor: pointer;
+}
 
 /* ── 結果 ── */
 .result-score { font-family: "Bebas Neue", sans-serif; font-size: clamp(5rem, 28vw, 9rem); line-height: 1; }

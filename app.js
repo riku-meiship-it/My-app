@@ -15,12 +15,14 @@ const el = {
   resultRank: document.getElementById("result-rank"),
   resultMsg: document.getElementById("result-msg"),
   review: document.getElementById("review"),
+  prev: document.getElementById("btn-prev"),
+  quitConfirm: document.getElementById("quit-confirm"),
 };
 
 let deck = [];
 let current = 0;
 let score = 0;
-let answers = [];
+let answers = []; // answers[i] = i問目で選んだ選択肢（未回答は undefined）
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -38,7 +40,10 @@ function show(name) {
 }
 
 function startQuiz() {
-  deck = shuffle(QUESTIONS).slice(0, QUIZ_LENGTH);
+  // 前の問題に戻っても選択肢の並びが変わらないよう、出題時に1度だけシャッフルする
+  deck = shuffle(QUESTIONS)
+    .slice(0, QUIZ_LENGTH)
+    .map((q) => ({ ...q, choices: shuffle([q.a, ...q.w]) }));
   current = 0;
   score = 0;
   answers = [];
@@ -52,10 +57,12 @@ function renderQuestion() {
   el.bar.style.width = `${(current / QUIZ_LENGTH) * 100}%`;
   el.text.textContent = q.q;
   el.choices.innerHTML = "";
+  el.prev.disabled = current === 0;
+  el.quitConfirm.hidden = true;
 
-  shuffle([q.a, ...q.w]).forEach((label) => {
+  q.choices.forEach((label) => {
     const btn = document.createElement("button");
-    btn.className = "choice";
+    btn.className = label === answers[current] ? "choice selected" : "choice";
     btn.textContent = label;
     btn.addEventListener("click", () => answer(label));
     el.choices.appendChild(btn);
@@ -64,17 +71,20 @@ function renderQuestion() {
 
 // 回答は記録するだけで、正誤と解説は15問終了後にまとめて表示する
 function answer(picked) {
-  const q = deck[current];
-  const isCorrect = picked === q.a;
-  if (isCorrect) score++;
-  answers.push({ q, picked, isCorrect });
-
+  answers[current] = picked;
   current++;
   if (current < QUIZ_LENGTH) renderQuestion();
   else showResult();
 }
 
+function prev() {
+  if (current === 0) return;
+  current--;
+  renderQuestion();
+}
+
 function showResult() {
+  score = deck.filter((q, i) => answers[i] === q.a).length;
   el.resultNum.textContent = score;
   const ranks = [
     [15, "SixTONES博士", "全問正解！もはや7人目のメンバー級の知識です。"],
@@ -92,7 +102,9 @@ function showResult() {
 
 function renderReview() {
   el.review.innerHTML = "";
-  answers.forEach(({ q, picked, isCorrect }, i) => {
+  deck.forEach((q, i) => {
+    const picked = answers[i];
+    const isCorrect = picked === q.a;
     const li = document.createElement("li");
     li.className = `review-item ${isCorrect ? "ok" : "ng"}`;
 
@@ -122,3 +134,15 @@ function renderReview() {
 document.getElementById("btn-play").addEventListener("click", startQuiz);
 document.getElementById("btn-retry").addEventListener("click", startQuiz);
 document.getElementById("btn-home").addEventListener("click", () => show("home"));
+el.prev.addEventListener("click", prev);
+document.getElementById("btn-quit").addEventListener("click", () => {
+  el.quitConfirm.hidden = false;
+  document.getElementById("btn-quit-no").focus();
+});
+document.getElementById("btn-quit-no").addEventListener("click", () => {
+  el.quitConfirm.hidden = true;
+});
+document.getElementById("btn-quit-yes").addEventListener("click", () => {
+  el.quitConfirm.hidden = true;
+  show("home");
+});
