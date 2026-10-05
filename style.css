@@ -37,6 +37,33 @@ body {
 .c-green { background: var(--shintaro); }
 .c-blue { background: var(--juri); }
 
+.bgm-toggle {
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top, 0px));
+  right: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: "Bebas Neue", "Noto Sans JP", sans-serif;
+  font-size: 1rem;
+  letter-spacing: .12em;
+  color: var(--muted);
+  background: rgba(10, 10, 10, .8);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.bgm-toggle:hover { color: var(--text); border-color: var(--muted); }
+.bgm-toggle.on { color: var(--text); }
+.bgm-bars { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
+.bgm-bars i { width: 3px; height: 4px; background: currentColor; }
+.bgm-toggle.on .bgm-bars i { animation: eq .8s ease-in-out infinite alternate; }
+.bgm-toggle.on .bgm-bars i:nth-child(1) { background: var(--jesse); }
+.bgm-toggle.on .bgm-bars i:nth-child(2) { background: var(--yugo); animation-delay: -.3s; }
+.bgm-toggle.on .bgm-bars i:nth-child(3) { background: var(--juri); animation-delay: -.6s; }
+@keyframes eq { from { height: 3px; } to { height: 12px; } }
+
 main {
   max-width: 640px;
   margin: 0 auto;

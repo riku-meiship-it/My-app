@@ -131,7 +131,45 @@ function renderReview() {
   });
 }
 
-document.getElementById("btn-play").addEventListener("click", startQuiz);
+// BGM：ブラウザは操作前の自動再生を許さないので、PLAYを押したときに鳴らし始める。
+// 利用者がOFFにした場合はその選択を覚えておく。
+const bgmBtn = document.getElementById("btn-bgm");
+const bgmLabel = document.getElementById("bgm-label");
+let bgmMuted = false;
+try {
+  bgmMuted = localStorage.getItem("bgm-muted") === "1";
+} catch (e) {}
+
+function updateBgmButton() {
+  const on = BGM.isPlaying();
+  bgmBtn.classList.toggle("on", on);
+  bgmBtn.setAttribute("aria-pressed", String(on));
+  bgmLabel.textContent = on ? "BGM ON" : "BGM OFF";
+}
+
+function setBgmMuted(muted) {
+  bgmMuted = muted;
+  try {
+    localStorage.setItem("bgm-muted", muted ? "1" : "0");
+  } catch (e) {}
+}
+
+bgmBtn.addEventListener("click", () => {
+  if (BGM.isPlaying()) {
+    BGM.stop();
+    setBgmMuted(true);
+  } else {
+    BGM.start();
+    setBgmMuted(false);
+  }
+  updateBgmButton();
+});
+
+document.getElementById("btn-play").addEventListener("click", () => {
+  if (!bgmMuted) BGM.start();
+  updateBgmButton();
+  startQuiz();
+});
 document.getElementById("btn-retry").addEventListener("click", startQuiz);
 document.getElementById("btn-home").addEventListener("click", () => show("home"));
 el.prev.addEventListener("click", prev);
