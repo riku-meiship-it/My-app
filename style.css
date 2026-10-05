@@ -1,0 +1,188 @@
+:root {
+  --bg: #0a0a0a;
+  --panel: #161616;
+  --line: #2a2a2a;
+  --text: #f2f2f2;
+  --muted: #9a9a9a;
+
+  /* メンバーカラー */
+  --jesse: #e60033;   /* ジェシー 赤 */
+  --taiga: #ff6fae;   /* 京本大我 ピンク */
+  --hokuto: #3a3a3a;  /* 松村北斗 黒（背景上で見えるよう明るめ） */
+  --yugo: #ffd400;    /* 髙地優吾 黄 */
+  --shintaro: #00b050;/* 森本慎太郎 緑 */
+  --juri: #1e6bff;    /* 田中樹 青 */
+
+  --rainbow: linear-gradient(90deg, var(--jesse), var(--taiga), #888, var(--yugo), var(--shintaro), var(--juri));
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  background-image: radial-gradient(circle at 50% 0%, #1c1c1c 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: "Noto Sans JP", sans-serif;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.color-bar { display: flex; height: 6px; position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+.color-bar span { flex: 1; }
+.c-red { background: var(--jesse); }
+.c-pink { background: var(--taiga); }
+.c-black { background: #000; outline: 1px solid #555; outline-offset: -1px; }
+.c-yellow { background: var(--yugo); }
+.c-green { background: var(--shintaro); }
+.c-blue { background: var(--juri); }
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 16px 32px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.screen { display: none; animation: fade .35s ease; }
+.screen.active { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ── ホーム ── */
+#screen-home, #screen-result { text-align: center; }
+
+.eyebrow { color: var(--muted); font-size: .85rem; letter-spacing: .2em; margin-bottom: 12px; }
+
+.title {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  line-height: .9;
+  letter-spacing: .04em;
+}
+.title-six { font-size: clamp(3.5rem, 16vw, 6.5rem); color: var(--muted); }
+.title-tones {
+  font-size: clamp(3.5rem, 16vw, 6.5rem);
+  background: var(--rainbow);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.title-quiz {
+  display: block;
+  font-size: clamp(2rem, 9vw, 3.5rem);
+  letter-spacing: .5em;
+  padding-left: .5em;
+  color: var(--text);
+}
+
+.stones { display: flex; justify-content: center; gap: 12px; margin: 28px 0; }
+.stone {
+  width: 18px; height: 18px;
+  transform: rotate(45deg);
+  box-shadow: 0 0 12px currentColor;
+}
+.stone.c-red { color: var(--jesse); }
+.stone.c-pink { color: var(--taiga); }
+.stone.c-black { color: #666; background: #000; outline: 1px solid #777; }
+.stone.c-yellow { color: var(--yugo); }
+.stone.c-green { color: var(--shintaro); }
+.stone.c-blue { color: var(--juri); }
+
+.lead { color: var(--muted); line-height: 1.8; margin-bottom: 36px; }
+.lead strong { color: var(--text); }
+
+.btn-play {
+  font-family: "Bebas Neue", "Noto Sans JP", sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: .2em;
+  color: var(--text);
+  background: #000;
+  border: 2px solid transparent;
+  border-image: var(--rainbow) 1;
+  padding: 14px 64px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.btn-play:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,255,255,.12); }
+.btn-play:active { transform: none; }
+
+.btn-sub {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 1rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 12px 32px;
+  cursor: pointer;
+}
+.btn-sub:hover { color: var(--text); border-color: var(--muted); }
+
+/* ── クイズ ── */
+.quiz-head { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 10px; }
+.q-count { font-family: "Bebas Neue", sans-serif; font-size: 1.5rem; letter-spacing: .1em; }
+.q-score { color: var(--muted); align-self: center; font-size: .9rem; }
+
+.progress { height: 4px; background: var(--line); margin-bottom: 28px; }
+.progress-bar { height: 100%; width: 0; background: var(--rainbow); background-size: 640px 100%; transition: width .3s; }
+
+.q-text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 24px; min-height: 3.2em; }
+
+.choices { display: grid; gap: 12px; }
+.choice {
+  --accent: var(--jesse);
+  text-align: left;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--accent);
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: background .15s, transform .15s;
+}
+.choice:nth-child(1) { --accent: var(--jesse); }
+.choice:nth-child(2) { --accent: var(--yugo); }
+.choice:nth-child(3) { --accent: var(--shintaro); }
+.choice:nth-child(4) { --accent: var(--juri); }
+.choice:hover:not(:disabled) { background: #202020; transform: translateX(4px); }
+.choice:disabled { cursor: default; }
+.choice.correct { background: rgba(0,176,80,.18); border-color: var(--shintaro); border-left-color: var(--shintaro); }
+.choice.wrong { background: rgba(230,0,51,.18); border-color: var(--jesse); border-left-color: var(--jesse); }
+.choice.dim { opacity: .45; }
+
+.feedback { margin-top: 24px; padding: 18px; background: var(--panel); border: 1px solid var(--line); }
+.feedback.hidden { display: none; }
+.feedback-result { font-weight: 900; font-size: 1.2rem; margin-bottom: 6px; }
+.feedback-result.ok { color: var(--shintaro); }
+.feedback-result.ng { color: var(--jesse); }
+.feedback-explain { color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
+.btn-next {
+  width: 100%;
+  font: inherit;
+  font-weight: 700;
+  color: #000;
+  background: var(--text);
+  border: none;
+  padding: 14px;
+  cursor: pointer;
+}
+.btn-next:hover { background: #fff; }
+
+/* ── 結果 ── */
+.result-score { font-family: "Bebas Neue", sans-serif; font-size: clamp(5rem, 28vw, 9rem); line-height: 1; }
+.result-score small { font-size: .35em; color: var(--muted); }
+.result-rank {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin: 12px 0 8px;
+  background: var(--rainbow);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.result-msg { color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+.result-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }
