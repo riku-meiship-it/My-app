@@ -12,6 +12,7 @@
   --yugo: #ffd400;    /* 髙地優吾 黄 */
   --shintaro: #00b050;/* 森本慎太郎 緑 */
   --juri: #1e6bff;    /* 田中樹 青 */
+  --choice-accent: #9e0b2b; /* 選択肢の濃い赤 */
 
   --rainbow: linear-gradient(90deg, var(--jesse), var(--taiga), #888, var(--yugo), var(--shintaro), var(--juri));
 }
@@ -158,10 +159,9 @@ main {
 .q-text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 24px; min-height: 3.2em; }
 
 /* 選択肢はすべて同じ見た目にし、A〜Dのラベルで区別する。
-   色は6人のメンバーカラーの帯を全選択肢に共通でつけ、位置ごとに意味を持たせない */
+   色は濃い赤1色で統一し、位置ごとに意味を持たせない */
 .choices { display: grid; gap: 12px; counter-reset: choice; }
 .choice {
-  --stripe: linear-gradient(180deg, var(--jesse), var(--taiga), #888, var(--yugo), var(--shintaro), var(--juri));
   counter-increment: choice;
   position: relative;
   overflow: hidden;
@@ -185,13 +185,12 @@ main {
   bottom: 0;
   left: 0;
   width: 5px;
-  background: var(--stripe);
+  background: var(--choice-accent);
   transition: width .15s;
 }
 .choice:hover::after { width: 8px; }
 .choice.selected {
-  border: 2px solid transparent;
-  border-image: var(--rainbow) 1;
+  border: 2px solid var(--choice-accent);
   padding: 13px 15px 13px 21px;
 }
 .choice::before {
@@ -208,10 +207,10 @@ main {
   border: 1px solid var(--line);
   transition: background .15s, color .15s, border-color .15s;
 }
-.choice:hover { background: #202020; border-color: var(--muted); }
-.choice:hover::before { color: var(--text); border-color: var(--muted); }
+.choice:hover { background: #202020; border-color: var(--choice-accent); }
+.choice:hover::before { color: var(--text); border-color: var(--choice-accent); }
 .choice.selected { background: #242424; }
-.choice.selected::before { background: var(--text); color: var(--bg); border-color: var(--text); }
+.choice.selected::before { background: var(--choice-accent); color: var(--text); border-color: var(--choice-accent); }
 
 .quiz-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
 .quiz-nav .btn-sub { padding: 10px 18px; font-size: .9rem; }
