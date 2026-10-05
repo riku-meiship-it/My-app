@@ -139,19 +139,18 @@ main {
 .btn-play:active { transform: none; }
 
 .home-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.btn-time {
-  font-family: "Noto Sans JP", sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: .08em;
-  color: var(--text);
-  background: transparent;
-  border: 1px solid var(--choice-accent);
-  padding: 12px 36px;
-  cursor: pointer;
-  transition: background .15s;
+/* トップの2つのボタンは同じ色・同じ大きさにそろえる */
+.home-actions .btn-play {
+  width: min(100%, 300px);
+  height: 68px;
+  padding: 0 16px;
 }
-.btn-time:hover { background: var(--choice-accent); }
+.btn-play-jp {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
 .home-note { font-size: .8rem; color: var(--muted); max-width: 22em; line-height: 1.6; }
 
 .q-timer {
