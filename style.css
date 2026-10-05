@@ -249,6 +249,44 @@ main {
   color: transparent;
 }
 .result-msg { color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+.share {
+  margin: 0 auto 36px;
+  max-width: 480px;
+  padding: 18px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+.share-title { font-weight: 700; letter-spacing: .1em; margin-bottom: 10px; }
+.share-text {
+  white-space: pre-line;
+  text-align: left;
+  font-size: .85rem;
+  line-height: 1.7;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+.share-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.share-btn {
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--choice-accent);
+  border: 1px solid var(--choice-accent);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: filter .15s;
+}
+.share-btn:hover { filter: brightness(1.25); }
+#share-copy, #share-native { background: transparent; }
+.share-status { min-height: 1.4em; margin-top: 10px; font-size: .85rem; color: var(--muted); }
+
 .review-title { font-size: 1.1rem; letter-spacing: .1em; margin-bottom: 16px; }
 .review { list-style: none; display: grid; gap: 12px; margin-bottom: 36px; text-align: left; }
 .review-item {

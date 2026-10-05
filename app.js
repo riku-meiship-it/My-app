@@ -1,4 +1,7 @@
 const QUIZ_LENGTH = 15;
+// シェア投稿に載せるURL（GitHub Pagesで公開したときのアドレス）
+const SHARE_URL = "https://riku-meiship-it.github.io/My-app/";
+const SHARE_TAGS = "#SixTONESクイズ #SixTONES";
 
 const screens = {
   home: document.getElementById("screen-home"),
@@ -97,6 +100,7 @@ function showResult() {
   el.resultRank.textContent = rank;
   el.resultMsg.textContent = msg;
   renderReview();
+  renderShare(rank);
   show("result");
 }
 
@@ -128,6 +132,49 @@ function renderReview() {
 
     li.append(head, question, ans, explain);
     el.review.appendChild(li);
+  });
+}
+
+function renderShare(rank) {
+  const text = `SixTONESクイズで${QUIZ_LENGTH}問中${score}問正解！\n称号は「${rank}」でした。\n${SHARE_TAGS}`;
+  const full = `${text}\n${SHARE_URL}`;
+  const t = encodeURIComponent(text);
+  const u = encodeURIComponent(SHARE_URL);
+  document.getElementById("share-text").textContent = full;
+  document.getElementById("share-x").href = `https://twitter.com/intent/tweet?text=${t}&url=${u}`;
+  document.getElementById("share-line").href = `https://line.me/R/share?text=${encodeURIComponent(full)}`;
+  document.getElementById("share-threads").href = `https://www.threads.net/intent/post?text=${encodeURIComponent(full)}`;
+  document.getElementById("share-status").textContent = "";
+  shareText = full;
+}
+
+let shareText = "";
+const shareStatus = document.getElementById("share-status");
+
+document.getElementById("share-copy").addEventListener("click", () => {
+  const done = () => (shareStatus.textContent = "コピーしました。Instagramなど好きなアプリに貼り付けてください。");
+  const fallback = () => {
+    // クリップボードが使えない環境では、文章を選択状態にして手動コピーしてもらう
+    const range = document.createRange();
+    range.selectNodeContents(document.getElementById("share-text"));
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    shareStatus.textContent = "自動でコピーできませんでした。選択された文章を長押し（右クリック）でコピーしてください。";
+  };
+  try {
+    navigator.clipboard.writeText(shareText).then(done, fallback);
+  } catch (e) {
+    fallback();
+  }
+});
+
+// スマホの共有メニュー（対応しているブラウザだけボタンを表示）
+const nativeBtn = document.getElementById("share-native");
+if (navigator.share) {
+  nativeBtn.hidden = false;
+  nativeBtn.addEventListener("click", () => {
+    navigator.share({ text: shareText }).catch(() => {});
   });
 }
 
