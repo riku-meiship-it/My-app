@@ -4,6 +4,16 @@ const TIME_LIMIT_MS = 3 * 60 * 1000; // タイムアタックの制限時間（3
 const SHARE_URL = "https://riku-meiship-it.github.io/My-app/";
 const SHARE_TAGS = "#SixTONESクイズ #SixTONES";
 
+// 正解数に応じた称号（[必要な正解数, 称号, メッセージ]、正解数の多い順）
+// ホーム画面の称号一覧と結果画面の両方でこの表を使う
+const RANKS = [
+  [15, "SixTONES博士", "全問正解！もはや7人目のメンバー級の知識です。"],
+  [12, "ガチのスト担", "かなりの上級者！あと少しで全問正解です。"],
+  [9, "立派なスト担", "しっかりSixTONESを追いかけていますね。"],
+  [5, "スト担見習い", "もっとSixTONESを知れば、もっと好きになるはず。"],
+  [0, "原石", "これから輝く原石です。もう一度挑戦してみよう！"],
+];
+
 const screens = {
   home: document.getElementById("screen-home"),
   quiz: document.getElementById("screen-quiz"),
@@ -143,14 +153,7 @@ function showResult() {
   el.resultMode.hidden = !timeAttack;
   score = deck.filter((q, i) => answers[i] === q.a).length;
   el.resultNum.textContent = score;
-  const ranks = [
-    [15, "SixTONES博士", "全問正解！もはや7人目のメンバー級の知識です。"],
-    [12, "ガチのスト担", "かなりの上級者！あと少しで全問正解です。"],
-    [9, "立派なスト担", "しっかりSixTONESを追いかけていますね。"],
-    [5, "スト担見習い", "もっとSixTONESを知れば、もっと好きになるはず。"],
-    [0, "原石", "これから輝く原石です。もう一度挑戦してみよう！"],
-  ];
-  const [, rank, msg] = ranks.find(([min]) => score >= min);
+  const [, rank, msg] = RANKS.find(([min]) => score >= min);
   el.resultRank.textContent = rank;
   el.resultMsg.textContent = msg;
   renderReview();
@@ -273,6 +276,24 @@ bgmBtn.addEventListener("click", () => {
   }
   updateBgmButton();
 });
+
+// ホーム画面の称号一覧
+function renderRankList() {
+  const list = document.getElementById("rank-list");
+  RANKS.forEach(([min, rank], i) => {
+    const max = i === 0 ? QUIZ_LENGTH : RANKS[i - 1][0] - 1;
+    const li = document.createElement("li");
+    const count = document.createElement("span");
+    count.className = "rank-count";
+    count.textContent = min === max ? `${min}問` : `${min}〜${max}問`;
+    const name = document.createElement("span");
+    name.className = "rank-name";
+    name.textContent = rank;
+    li.append(count, name);
+    list.appendChild(li);
+  });
+}
+renderRankList();
 
 function startFromHome(withTimer) {
   timeAttack = withTimer;

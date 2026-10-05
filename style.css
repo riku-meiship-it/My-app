@@ -151,6 +151,22 @@ main {
   font-weight: 700;
   letter-spacing: .12em;
 }
+.ranks { margin: 36px auto 0; max-width: 300px; }
+.ranks-title { font-size: .85rem; font-weight: 700; letter-spacing: .2em; color: var(--muted); margin-bottom: 10px; }
+.rank-list { list-style: none; border-top: 1px solid var(--line); }
+.rank-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--line);
+}
+.rank-count { font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--muted); white-space: nowrap; }
+.rank-name { font-weight: 700; }
+.rank-list li:first-child .rank-name { color: var(--text); }
+.rank-list li:first-child .rank-count { color: var(--text); }
+
 .home-note { font-size: .8rem; color: var(--muted); max-width: 22em; line-height: 1.6; }
 
 .q-timer {
