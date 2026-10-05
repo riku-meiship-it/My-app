@@ -33,13 +33,18 @@
         <span class="stone c-yellow"></span><span class="stone c-green"></span><span class="stone c-blue"></span>
       </div>
       <p class="lead">全200問からランダムに<strong>15問</strong>出題。<br>あなたは何問わかる？</p>
-      <button id="btn-play" class="btn-play">PLAY</button>
+      <div class="home-actions">
+        <button id="btn-play" class="btn-play">PLAY</button>
+        <button id="btn-time" class="btn-time">3分タイムアタック</button>
+        <p class="home-note">タイムアタックは15問を3分以内に。時間切れになると未回答は不正解になります。</p>
+      </div>
     </section>
 
     <!-- クイズ画面 -->
     <section id="screen-quiz" class="screen">
       <div class="quiz-head">
         <span id="q-count" class="q-count">Q1 / 15</span>
+        <span id="q-timer" class="q-timer" role="timer" aria-label="残り時間" hidden>3:00</span>
       </div>
       <div class="progress"><div id="progress-bar" class="progress-bar"></div></div>
       <h2 id="q-text" class="q-text"></h2>
@@ -60,6 +65,7 @@
     <!-- 結果画面 -->
     <section id="screen-result" class="screen">
       <p class="eyebrow">RESULT</p>
+      <p id="result-mode" class="result-mode" hidden></p>
       <p class="result-score"><span id="result-num">0</span><small> / 15</small></p>
       <p id="result-rank" class="result-rank"></p>
       <p id="result-msg" class="result-msg"></p>

@@ -1,4 +1,5 @@
 const QUIZ_LENGTH = 15;
+const TIME_LIMIT_MS = 3 * 60 * 1000; // タイムアタックの制限時間（3分）
 // シェア投稿に載せるURL（GitHub Pagesで公開したときのアドレス）
 const SHARE_URL = "https://riku-meiship-it.github.io/My-app/";
 const SHARE_TAGS = "#SixTONESクイズ #SixTONES";
@@ -20,12 +21,20 @@ const el = {
   review: document.getElementById("review"),
   prev: document.getElementById("btn-prev"),
   quitConfirm: document.getElementById("quit-confirm"),
+  timer: document.getElementById("q-timer"),
+  resultMode: document.getElementById("result-mode"),
 };
 
 let deck = [];
 let current = 0;
 let score = 0;
 let answers = []; // answers[i] = i問目で選んだ選択肢（未回答は undefined）
+let timeAttack = false; // 3分タイムアタック中かどうか
+let deadline = 0;
+let timerId = null;
+let timeUp = false;
+let finished = false;
+let elapsedMs = 0;
 
 function shuffle(arr) {
   const a = arr.slice();
@@ -42,6 +51,34 @@ function show(name) {
   window.scrollTo(0, 0);
 }
 
+// 残り時間は切り上げ、かかった時間は切り捨てで表示する
+function formatTime(ms, roundUp = true) {
+  const sec = Math.max(0, roundUp ? Math.ceil(ms / 1000) : Math.floor(ms / 1000));
+  return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+}
+
+function startTimer() {
+  deadline = Date.now() + TIME_LIMIT_MS;
+  el.timer.hidden = false;
+  tickTimer();
+  timerId = setInterval(tickTimer, 250);
+}
+
+function stopTimer() {
+  clearInterval(timerId);
+  timerId = null;
+}
+
+function tickTimer() {
+  const left = deadline - Date.now();
+  el.timer.textContent = formatTime(left);
+  el.timer.classList.toggle("warn", left <= 30 * 1000);
+  if (left <= 0) {
+    timeUp = true;
+    showResult();
+  }
+}
+
 function startQuiz() {
   // 前の問題に戻っても選択肢の並びが変わらないよう、出題時に1度だけシャッフルする
   deck = shuffle(QUESTIONS)
@@ -50,8 +87,14 @@ function startQuiz() {
   current = 0;
   score = 0;
   answers = [];
+  timeUp = false;
+  finished = false;
+  stopTimer();
+  el.timer.hidden = true;
+  el.timer.classList.remove("warn");
   show("quiz");
   renderQuestion();
+  if (timeAttack) startTimer();
 }
 
 function renderQuestion() {
@@ -74,6 +117,7 @@ function renderQuestion() {
 
 // 回答は記録するだけで、正誤と解説は15問終了後にまとめて表示する
 function answer(picked) {
+  if (finished) return;
   answers[current] = picked;
   current++;
   if (current < QUIZ_LENGTH) renderQuestion();
@@ -87,6 +131,16 @@ function prev() {
 }
 
 function showResult() {
+  if (finished) return;
+  finished = true;
+  if (timeAttack) {
+    stopTimer();
+    elapsedMs = Math.min(TIME_LIMIT_MS, TIME_LIMIT_MS - (deadline - Date.now()));
+    el.resultMode.textContent = timeUp
+      ? "3分タイムアタック ／ 時間切れ！"
+      : `3分タイムアタック ／ クリアタイム ${formatTime(elapsedMs, false)}`;
+  }
+  el.resultMode.hidden = !timeAttack;
   score = deck.filter((q, i) => answers[i] === q.a).length;
   el.resultNum.textContent = score;
   const ranks = [
@@ -122,9 +176,10 @@ function renderReview() {
 
     const ans = document.createElement("p");
     ans.className = "review-a";
+    const pickedLabel = picked === undefined ? "未回答" : picked;
     ans.textContent = isCorrect
-      ? `あなたの答え：${picked}`
-      : `あなたの答え：${picked}　／　正解：${q.a}`;
+      ? `あなたの答え：${pickedLabel}`
+      : `あなたの答え：${pickedLabel}　／　正解：${q.a}`;
 
     const explain = document.createElement("p");
     explain.className = "review-e";
@@ -136,7 +191,8 @@ function renderReview() {
 }
 
 function renderShare(rank) {
-  const text = `SixTONESクイズで${QUIZ_LENGTH}問中${score}問正解！\n称号は「${rank}」でした。\n${SHARE_TAGS}`;
+  const mode = !timeAttack ? "" : timeUp ? "【3分タイムアタック・時間切れ】\n" : `【3分タイムアタック・${formatTime(elapsedMs, false)}でクリア】\n`;
+  const text = `${mode}SixTONESクイズで${QUIZ_LENGTH}問中${score}問正解！\n称号は「${rank}」でした。\n${SHARE_TAGS}`;
   const full = `${text}\n${SHARE_URL}`;
   const t = encodeURIComponent(text);
   const u = encodeURIComponent(SHARE_URL);
@@ -218,11 +274,14 @@ bgmBtn.addEventListener("click", () => {
   updateBgmButton();
 });
 
-document.getElementById("btn-play").addEventListener("click", () => {
+function startFromHome(withTimer) {
+  timeAttack = withTimer;
   if (!bgmMuted) BGM.start();
   updateBgmButton();
   startQuiz();
-});
+}
+document.getElementById("btn-play").addEventListener("click", () => startFromHome(false));
+document.getElementById("btn-time").addEventListener("click", () => startFromHome(true));
 document.getElementById("btn-retry").addEventListener("click", startQuiz);
 document.getElementById("btn-home").addEventListener("click", () => show("home"));
 el.prev.addEventListener("click", prev);
@@ -234,6 +293,8 @@ document.getElementById("btn-quit-no").addEventListener("click", () => {
   el.quitConfirm.hidden = true;
 });
 document.getElementById("btn-quit-yes").addEventListener("click", () => {
+  stopTimer();
+  finished = true;
   el.quitConfirm.hidden = true;
   show("home");
 });

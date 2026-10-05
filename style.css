@@ -138,6 +138,34 @@ main {
 .btn-play:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(255,255,255,.12); }
 .btn-play:active { transform: none; }
 
+.home-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.btn-time {
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--choice-accent);
+  padding: 12px 36px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-time:hover { background: var(--choice-accent); }
+.home-note { font-size: .8rem; color: var(--muted); max-width: 22em; line-height: 1.6; }
+
+.q-timer {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: .1em;
+  font-variant-numeric: tabular-nums;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+}
+.q-timer.warn { color: var(--text); background: var(--choice-accent); border-color: var(--choice-accent); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .6; } }
+.result-mode { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+
 .btn-sub {
   font-family: "Noto Sans JP", sans-serif;
   font-size: 1rem;
