@@ -1,5 +1,7 @@
 const QUIZ_LENGTH = 15;
-const TIME_LIMIT_MS = 3 * 60 * 1000; // タイムアタックの制限時間（3分）
+const TIME_LIMIT_MS = 1 * 60 * 1000; // タイムアタックの制限時間（1分）
+const TIME_LABEL = "1分タイムアタック";
+const WARN_MS = 10 * 1000; // 残りこの時間を切るとタイマーを赤く点滅させる
 // シェア投稿に載せるURL（GitHub Pagesで公開したときのアドレス）
 const SHARE_URL = "https://riku-meiship-it.github.io/My-app/";
 const SHARE_TAGS = "#SixTONESクイズ #SixTONES";
@@ -39,7 +41,7 @@ let deck = [];
 let current = 0;
 let score = 0;
 let answers = []; // answers[i] = i問目で選んだ選択肢（未回答は undefined）
-let timeAttack = false; // 3分タイムアタック中かどうか
+let timeAttack = false; // タイムアタック中かどうか
 let deadline = 0;
 let timerId = null;
 let timeUp = false;
@@ -82,7 +84,7 @@ function stopTimer() {
 function tickTimer() {
   const left = deadline - Date.now();
   el.timer.textContent = formatTime(left);
-  el.timer.classList.toggle("warn", left <= 30 * 1000);
+  el.timer.classList.toggle("warn", left <= WARN_MS);
   if (left <= 0) {
     timeUp = true;
     showResult();
@@ -148,8 +150,8 @@ function showResult() {
     stopTimer();
     elapsedMs = Math.min(TIME_LIMIT_MS, TIME_LIMIT_MS - (deadline - Date.now()));
     el.resultMode.textContent = timeUp
-      ? "3分タイムアタック ／ 時間切れ！"
-      : `3分タイムアタック ／ クリアタイム ${formatTime(elapsedMs, false)}`;
+      ? `${TIME_LABEL} ／ 時間切れ！`
+      : `${TIME_LABEL} ／ クリアタイム ${formatTime(elapsedMs, false)}`;
   }
   el.resultMode.hidden = !timeAttack;
   score = deck.filter((q, i) => answers[i] === q.a).length;
@@ -195,7 +197,7 @@ function renderReview() {
 }
 
 function renderShare(rank) {
-  const mode = !timeAttack ? "" : timeUp ? "【3分タイムアタック・時間切れ】\n" : `【3分タイムアタック・${formatTime(elapsedMs, false)}でクリア】\n`;
+  const mode = !timeAttack ? "" : timeUp ? `【${TIME_LABEL}・時間切れ】\n` : `【${TIME_LABEL}・${formatTime(elapsedMs, false)}でクリア】\n`;
   const text = `${mode}SixTONESクイズで${QUIZ_LENGTH}問中${score}問正解！\n称号は「${rank}」でした。\n${SHARE_TAGS}`;
   const full = `${text}\n${SHARE_URL}`;
   const t = encodeURIComponent(text);
