@@ -157,26 +157,41 @@ main {
 
 .q-text { font-size: 1.25rem; line-height: 1.6; margin-bottom: 24px; min-height: 3.2em; }
 
-.choices { display: grid; gap: 12px; }
+/* 選択肢はすべて同じ見た目にし、A〜Dのラベルで区別する（色で意味を持たせない） */
+.choices { display: grid; gap: 12px; counter-reset: choice; }
 .choice {
-  --accent: var(--jesse);
+  counter-increment: choice;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   text-align: left;
   font: inherit;
   font-size: 1rem;
   color: var(--text);
   background: var(--panel);
   border: 1px solid var(--line);
-  border-left: 6px solid var(--accent);
-  padding: 16px 18px;
+  padding: 14px 16px;
   cursor: pointer;
-  transition: background .15s, transform .15s;
+  transition: background .15s, border-color .15s;
 }
-.choice:nth-child(1) { --accent: var(--jesse); }
-.choice:nth-child(2) { --accent: var(--yugo); }
-.choice:nth-child(3) { --accent: var(--shintaro); }
-.choice:nth-child(4) { --accent: var(--juri); }
+.choice::before {
+  content: counter(choice, upper-alpha);
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: .05em;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  transition: background .15s, color .15s, border-color .15s;
+}
+.choice:hover { background: #202020; border-color: var(--muted); }
+.choice:hover::before { color: var(--text); border-color: var(--muted); }
 .choice.selected { background: #242424; border-color: var(--text); }
-.choice:hover:not(:disabled) { background: #202020; transform: translateX(4px); }
+.choice.selected::before { background: var(--text); color: var(--bg); border-color: var(--text); }
 
 .quiz-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 28px; }
 .quiz-nav .btn-sub { padding: 10px 18px; font-size: .9rem; }
