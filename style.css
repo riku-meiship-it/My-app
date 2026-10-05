@@ -229,7 +229,6 @@ main {
   background: var(--choice-accent);
   transition: width .15s;
 }
-.choice:hover::after { width: 8px; }
 .choice.selected {
   border: 2px solid var(--choice-accent);
   padding: 13px 15px 13px 21px;
@@ -248,8 +247,13 @@ main {
   border: 1px solid var(--line);
   transition: background .15s, color .15s, border-color .15s;
 }
-.choice:hover { background: #202020; border-color: var(--choice-accent); }
-.choice:hover::before { color: var(--text); border-color: var(--choice-accent); }
+/* 回答直後は、同じ位置にある次の問題の選択肢がhover状態になって赤く見えてしまう。
+   そのため hoverの強調は「マウス操作の端末」かつ「新しい問題の表示後にマウスを動かしたとき」だけにする */
+@media (hover: hover) and (pointer: fine) {
+  .choices:not(.no-hover) .choice:hover { background: #202020; border-color: var(--choice-accent); }
+  .choices:not(.no-hover) .choice:hover::before { color: var(--text); border-color: var(--choice-accent); }
+  .choices:not(.no-hover) .choice:hover::after { width: 8px; }
+}
 .choice.selected { background: #242424; }
 .choice.selected::before { background: var(--choice-accent); color: var(--text); border-color: var(--choice-accent); }
 

@@ -113,6 +113,7 @@ function renderQuestion() {
   el.bar.style.width = `${(current / QUIZ_LENGTH) * 100}%`;
   el.text.textContent = q.q;
   el.choices.innerHTML = "";
+  el.choices.classList.add("no-hover"); // マウスが動くまでhoverの強調を止める（style.css参照）
   el.prev.disabled = current === 0;
   el.quitConfirm.hidden = true;
 
@@ -306,6 +307,7 @@ document.getElementById("btn-time").addEventListener("click", () => startFromHom
 document.getElementById("btn-retry").addEventListener("click", startQuiz);
 document.getElementById("btn-home").addEventListener("click", () => show("home"));
 el.prev.addEventListener("click", prev);
+el.choices.addEventListener("pointermove", () => el.choices.classList.remove("no-hover"));
 document.getElementById("btn-quit").addEventListener("click", () => {
   el.quitConfirm.hidden = false;
   document.getElementById("btn-quit-no").focus();
