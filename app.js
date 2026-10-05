@@ -145,6 +145,7 @@ function renderShare(rank) {
   document.getElementById("share-line").href = `https://line.me/R/share?text=${encodeURIComponent(full)}`;
   document.getElementById("share-threads").href = `https://www.threads.net/intent/post?text=${encodeURIComponent(full)}`;
   document.getElementById("share-status").textContent = "";
+  document.getElementById("share-panel").hidden = true;
   shareText = full;
 }
 
@@ -169,14 +170,19 @@ document.getElementById("share-copy").addEventListener("click", () => {
   }
 });
 
-// スマホの共有メニュー（対応しているブラウザだけボタンを表示）
-const nativeBtn = document.getElementById("share-native");
-if (navigator.share) {
-  nativeBtn.hidden = false;
-  nativeBtn.addEventListener("click", () => {
-    navigator.share({ text: shareText }).catch(() => {});
-  });
-}
+// 「結果をシェアする」ボタン：
+// スマホなど共有メニューが使える環境ではそれを開き、使えない環境ではアプリの選択肢を表示する
+const sharePanel = document.getElementById("share-panel");
+document.getElementById("share-open").addEventListener("click", () => {
+  if (navigator.share) {
+    navigator.share({ text: shareText }).catch((e) => {
+      // 利用者が閉じた場合は何もしない。共有できなかった場合は選択肢を表示する
+      if (e && e.name !== "AbortError") sharePanel.hidden = false;
+    });
+  } else {
+    sharePanel.hidden = !sharePanel.hidden;
+  }
+});
 
 // BGM：ブラウザは操作前の自動再生を許さないので、PLAYを押したときに鳴らし始める。
 // 利用者がOFFにした場合はその選択を覚えておく。

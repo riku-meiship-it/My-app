@@ -65,14 +65,17 @@
       <p id="result-msg" class="result-msg"></p>
 
       <div class="share">
-        <p class="share-title">結果をシェア</p>
-        <p id="share-text" class="share-text"></p>
-        <div class="share-buttons">
-          <a id="share-x" class="share-btn" href="#" target="_blank" rel="noopener">X でポスト</a>
-          <a id="share-line" class="share-btn" href="#" target="_blank" rel="noopener">LINE で送る</a>
-          <a id="share-threads" class="share-btn" href="#" target="_blank" rel="noopener">Threads で投稿</a>
-          <button id="share-copy" class="share-btn" type="button">テキストをコピー</button>
-          <button id="share-native" class="share-btn" type="button" hidden>その他のアプリ</button>
+        <button id="share-open" class="share-main" type="button">結果をシェアする</button>
+        <div id="share-panel" class="share-panel" hidden>
+          <p class="share-hint">シェアするアプリを選んでください</p>
+          <div class="share-buttons">
+            <a id="share-x" class="share-btn" href="#" target="_blank" rel="noopener">X</a>
+            <a id="share-line" class="share-btn" href="#" target="_blank" rel="noopener">LINE</a>
+            <a id="share-threads" class="share-btn" href="#" target="_blank" rel="noopener">Threads</a>
+            <button id="share-copy" class="share-btn" type="button">コピー</button>
+          </div>
+          <p class="share-hint">シェアされる文章</p>
+          <p id="share-text" class="share-text"></p>
         </div>
         <p id="share-status" class="share-status" role="status"></p>
       </div>

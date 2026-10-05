@@ -249,14 +249,49 @@ main {
   color: transparent;
 }
 .result-msg { color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
-.share {
-  margin: 0 auto 36px;
-  max-width: 480px;
-  padding: 18px 16px;
+.share { margin: 0 auto 36px; max-width: 480px; }
+.share-main {
+  width: 100%;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: .1em;
+  color: var(--text);
+  background: var(--choice-accent);
+  border: none;
+  padding: 16px;
+  cursor: pointer;
+  transition: filter .15s;
+}
+.share-main:hover { filter: brightness(1.25); }
+.share-panel {
+  margin-top: 12px;
+  padding: 16px;
   background: var(--panel);
   border: 1px solid var(--line);
 }
-.share-title { font-weight: 700; letter-spacing: .1em; margin-bottom: 10px; }
+.share-hint { font-size: .85rem; color: var(--muted); margin-bottom: 10px; }
+.share-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+@media (max-width: 360px) { .share-buttons { grid-template-columns: repeat(2, 1fr); } }
+.share-btn {
+  font: inherit;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  text-align: center;
+  background: transparent;
+  border: 1px solid var(--choice-accent);
+  padding: 12px 4px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.share-btn:hover { background: var(--choice-accent); }
 .share-text {
   white-space: pre-line;
   text-align: left;
@@ -266,25 +301,9 @@ main {
   background: var(--bg);
   border: 1px solid var(--line);
   padding: 10px 12px;
-  margin-bottom: 14px;
   overflow-wrap: anywhere;
   user-select: text;
 }
-.share-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-.share-btn {
-  font: inherit;
-  font-size: .9rem;
-  font-weight: 700;
-  color: var(--text);
-  text-decoration: none;
-  background: var(--choice-accent);
-  border: 1px solid var(--choice-accent);
-  padding: 10px 16px;
-  cursor: pointer;
-  transition: filter .15s;
-}
-.share-btn:hover { filter: brightness(1.25); }
-#share-copy, #share-native { background: transparent; }
 .share-status { min-height: 1.4em; margin-top: 10px; font-size: .85rem; color: var(--muted); }
 
 .review-title { font-size: 1.1rem; letter-spacing: .1em; margin-bottom: 16px; }
