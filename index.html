@@ -37,10 +37,14 @@
         <button id="btn-play" class="btn-play">PLAY</button>
         <button id="btn-time" class="btn-play btn-play-jp">1分半タイムアタック</button>
         <p class="home-note">タイムアタックは15問を1分半以内に。時間切れになると未回答は不正解になります。</p>
+        <button id="btn-song" class="btn-play btn-play-jp">曲当てモード</button>
+        <p class="home-note">曲のテーマやタイアップなどのヒントから曲名を当てます。Jr.時代から最新曲まで全100問から10問出題。</p>
       </div>
       <div class="ranks">
         <h2 class="ranks-title">称号一覧</h2>
         <ol id="rank-list" class="rank-list"></ol>
+        <h2 class="ranks-title ranks-title-sub">曲当てモードの称号</h2>
+        <ol id="song-rank-list" class="rank-list"></ol>
       </div>
     </section>
 
@@ -70,7 +74,7 @@
     <section id="screen-result" class="screen">
       <p class="eyebrow">RESULT</p>
       <p id="result-mode" class="result-mode" hidden></p>
-      <p class="result-score"><span id="result-num">0</span><small> / 15</small></p>
+      <p class="result-score"><span id="result-num">0</span><small id="result-total"> / 15</small></p>
       <p id="result-rank" class="result-rank"></p>
       <p id="result-msg" class="result-msg"></p>
 
@@ -100,6 +104,7 @@
   </main>
 
   <script src="questions.js"></script>
+  <script src="songs.js"></script>
   <script src="bgm.js"></script>
   <script src="app.js"></script>
 </body>

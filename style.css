@@ -154,6 +154,7 @@ main {
 .ranks { margin: 36px auto 0; max-width: 300px; }
 .ranks-title { font-size: .85rem; font-weight: 700; letter-spacing: .2em; color: var(--muted); margin-bottom: 10px; }
 .rank-list { list-style: none; border-top: 1px solid var(--line); }
+.ranks-title-sub { margin-top: 24px; }
 .rank-list li {
   display: flex;
   justify-content: space-between;

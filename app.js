@@ -1,4 +1,5 @@
 const QUIZ_LENGTH = 15;
+const SONG_QUIZ_LENGTH = 10; // 曲当てモードの出題数
 const TIME_LIMIT_MS = 90 * 1000; // タイムアタックの制限時間（1分半）
 const TIME_LABEL = "1分半タイムアタック";
 const WARN_MS = 10 * 1000; // 残りこの時間を切るとタイマーを赤く点滅させる
@@ -13,6 +14,15 @@ const RANKS = [
   [12, "ガチのスト担", "かなりの上級者！あと少しで全問正解です。"],
   [9, "立派なスト担", "しっかりSixTONESを追いかけていますね。"],
   [5, "スト担見習い", "もっとSixTONESを知れば、もっと好きになるはず。"],
+  [0, "原石", "これから輝く原石です。もう一度挑戦してみよう！"],
+];
+
+// 曲当てモードの称号（10問用）
+const SONG_RANKS = [
+  [10, "SixTONES楽曲マスター", "全問正解！ヒントだけで全曲わかるなんて、さすがです。"],
+  [8, "音色の達人", "ほとんどの曲がわかりました。かなり聴き込んでいますね。"],
+  [5, "スト担リスナー", "半分以上正解！もっと聴けばもっとわかるはず。"],
+  [2, "聴き込み中", "知らなかった曲があれば、ぜひ聴いてみてください。"],
   [0, "原石", "これから輝く原石です。もう一度挑戦してみよう！"],
 ];
 
@@ -35,13 +45,16 @@ const el = {
   quitConfirm: document.getElementById("quit-confirm"),
   timer: document.getElementById("q-timer"),
   resultMode: document.getElementById("result-mode"),
+  resultTotal: document.getElementById("result-total"),
 };
 
 let deck = [];
 let current = 0;
 let score = 0;
 let answers = []; // answers[i] = i問目で選んだ選択肢（未回答は undefined）
+let mode = "normal"; // "normal"（通常） / "time"（タイムアタック） / "song"（曲当て）
 let timeAttack = false; // タイムアタック中かどうか
+let quizLength = QUIZ_LENGTH; // 今のモードの出題数
 let deadline = 0;
 let timerId = null;
 let timeUp = false;
@@ -91,10 +104,24 @@ function tickTimer() {
   }
 }
 
+// 問題をランダムに選ぶ。曲当てモードでは、同じ曲が1回の中で2回出ないよう正解の曲名が重ならないものだけを選ぶ
+function pickQuestions(pool, count, uniqueAnswer) {
+  const picked = [];
+  const used = new Set();
+  for (const q of shuffle(pool)) {
+    if (uniqueAnswer && used.has(q.a)) continue;
+    picked.push(q);
+    used.add(q.a);
+    if (picked.length === count) break;
+  }
+  return picked;
+}
+
 function startQuiz() {
   // 前の問題に戻っても選択肢の並びが変わらないよう、出題時に1度だけシャッフルする
-  deck = shuffle(QUESTIONS)
-    .slice(0, QUIZ_LENGTH)
+  timeAttack = mode === "time";
+  quizLength = mode === "song" ? SONG_QUIZ_LENGTH : QUIZ_LENGTH;
+  deck = pickQuestions(mode === "song" ? SONG_QUESTIONS : QUESTIONS, quizLength, mode === "song")
     .map((q) => ({ ...q, choices: shuffle([q.a, ...q.w]) }));
   current = 0;
   score = 0;
@@ -111,8 +138,8 @@ function startQuiz() {
 
 function renderQuestion() {
   const q = deck[current];
-  el.count.textContent = `Q${current + 1} / ${QUIZ_LENGTH}`;
-  el.bar.style.width = `${(current / QUIZ_LENGTH) * 100}%`;
+  el.count.textContent = `Q${current + 1} / ${quizLength}`;
+  el.bar.style.width = `${(current / quizLength) * 100}%`;
   el.text.textContent = q.q;
   el.choices.innerHTML = "";
   el.choices.classList.add("no-hover"); // マウスが動くまでhoverの強調を止める（style.css参照）
@@ -133,7 +160,7 @@ function answer(picked) {
   if (finished) return;
   answers[current] = picked;
   current++;
-  if (current < QUIZ_LENGTH) renderQuestion();
+  if (current < quizLength) renderQuestion();
   else showResult();
 }
 
@@ -153,10 +180,12 @@ function showResult() {
       ? `${TIME_LABEL} ／ 時間切れ！`
       : `${TIME_LABEL} ／ クリアタイム ${formatTime(elapsedMs, false)}`;
   }
-  el.resultMode.hidden = !timeAttack;
+  if (mode === "song") el.resultMode.textContent = "曲当てモード";
+  el.resultMode.hidden = mode === "normal";
+  el.resultTotal.textContent = ` / ${quizLength}`;
   score = deck.filter((q, i) => answers[i] === q.a).length;
   el.resultNum.textContent = score;
-  const [, rank, msg] = RANKS.find(([min]) => score >= min);
+  const [, rank, msg] = (mode === "song" ? SONG_RANKS : RANKS).find(([min]) => score >= min);
   el.resultRank.textContent = rank;
   el.resultMsg.textContent = msg;
   renderReview();
@@ -197,8 +226,12 @@ function renderReview() {
 }
 
 function renderShare(rank) {
-  const mode = !timeAttack ? "" : timeUp ? `【${TIME_LABEL}・時間切れ】\n` : `【${TIME_LABEL}・${formatTime(elapsedMs, false)}でクリア】\n`;
-  const text = `${mode}SixTONESクイズで${QUIZ_LENGTH}問中${score}問正解！\n称号は「${rank}」でした。\n${SHARE_TAGS}`;
+  const label =
+    mode === "song" ? "【曲当てモード】\n"
+    : !timeAttack ? ""
+    : timeUp ? `【${TIME_LABEL}・時間切れ】\n`
+    : `【${TIME_LABEL}・${formatTime(elapsedMs, false)}でクリア】\n`;
+  const text = `${label}SixTONESクイズで${quizLength}問中${score}問正解！\n称号は「${rank}」でした。\n${SHARE_TAGS}`;
   const full = `${text}\n${SHARE_URL}`;
   const t = encodeURIComponent(text);
   const u = encodeURIComponent(SHARE_URL);
@@ -280,11 +313,11 @@ bgmBtn.addEventListener("click", () => {
   updateBgmButton();
 });
 
-// ホーム画面の称号一覧
-function renderRankList() {
-  const list = document.getElementById("rank-list");
-  RANKS.forEach(([min, rank], i) => {
-    const max = i === 0 ? QUIZ_LENGTH : RANKS[i - 1][0] - 1;
+// ホーム画面の称号一覧（通常・タイムアタック用と、曲当てモード用）
+function renderRankList(listId, ranks, total) {
+  const list = document.getElementById(listId);
+  ranks.forEach(([min, rank], i) => {
+    const max = i === 0 ? total : ranks[i - 1][0] - 1;
     const li = document.createElement("li");
     const count = document.createElement("span");
     count.className = "rank-count";
@@ -296,16 +329,18 @@ function renderRankList() {
     list.appendChild(li);
   });
 }
-renderRankList();
+renderRankList("rank-list", RANKS, QUIZ_LENGTH);
+renderRankList("song-rank-list", SONG_RANKS, SONG_QUIZ_LENGTH);
 
-function startFromHome(withTimer) {
-  timeAttack = withTimer;
+function startFromHome(nextMode) {
+  mode = nextMode;
   if (!bgmMuted) BGM.start();
   updateBgmButton();
   startQuiz();
 }
-document.getElementById("btn-play").addEventListener("click", () => startFromHome(false));
-document.getElementById("btn-time").addEventListener("click", () => startFromHome(true));
+document.getElementById("btn-play").addEventListener("click", () => startFromHome("normal"));
+document.getElementById("btn-time").addEventListener("click", () => startFromHome("time"));
+document.getElementById("btn-song").addEventListener("click", () => startFromHome("song"));
 document.getElementById("btn-retry").addEventListener("click", startQuiz);
 document.getElementById("btn-home").addEventListener("click", () => show("home"));
 el.prev.addEventListener("click", prev);
